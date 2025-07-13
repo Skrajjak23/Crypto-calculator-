@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Calculator - AI Homework Helper</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #4a00e0;
+            --secondary: #8e2de2;
+            --accent: #00c6ff;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #ff7675;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--dark), #16213e);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent), var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+        
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            color: var(--light);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            box-shadow: 0 4px 15px rgba(142, 45, 226, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--accent);
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+        
+        .card-header i {
+            font-size: 1.6rem;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 198, 255, 0.2);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 14px 25px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(142, 45, 226, 0.4);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        .image-upload {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .image-upload:hover {
+            border-color: var(--accent);
+            background: rgba(0, 198, 255, 0.05);
+        }
+        
+        .image-upload i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .result-container {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            min-height: 150px;
+        }
+        
+        .result-placeholder {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .result-content {
+            line-height: 1.8;
+        }
+        
+        .loader {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loader .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .crypto-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .crypto-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .crypto-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .crypto-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        
+        .crypto-card .price {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .ad-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ad-label {
+            background: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: -10px;
+            right: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 30px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .crypto-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-calculator"></i>
+                <h1>Crypto Calculator - AI Helper</h1>
+            </div>
+            <p class="tagline">Your all-in-one solution for cryptocurrency calculations and AI-powered homework assistance</p>
+            
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="crypto">Crypto Calculator</button>
+                <button class="tab-btn" data-tab="ai">AI Homework Helper</button>
+            </div>
+        </header>
+        
+        <div class="ad-container">
+            <div style="position: relative; width: 100%;">
+                <span class="ad-label">ADVERTISEMENT</span>
+                <div style="background: linear-gradient(45deg, #1a1a2e, #16213e); height: 150px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                    <p>Ad Space (320x50)</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="crypto" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-coins"></i>
+                    <h2>Crypto Converter</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="amount">Amount</label>
+                    <input type="number" id="amount" placeholder="Enter amount" value="1">
+                </div>
+                
+                <div class="input-group">
+                    <label for="from-crypto">From</label>
+                    <select id="from-crypto">
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                        <option value="BNB">Binance Coin (BNB)</option>
+                        <option value="ADA">Cardano (ADA)</option>
+                        <option value="SOL">Solana (SOL)</option>
+                        <option value="XRP">Ripple (XRP)</option>
+                        <option value="DOGE">Dogecoin (DOGE)</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="to-crypto">To</label>
+                    <select id="to-crypto">
+                        <option value="USD">US Dollar (USD)</option>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="BTC">Bitcoin (BTC)</option>
+                        <option value="ETH">Ethereum (ETH)</option>
+                        <option value="GBP">British Pound (GBP)</option>
+                        <option value="INR">Indian Rupee (INR)</option>
+                    </select>
+                </div>
+                
+                <button class="btn" id="convert-btn">
+                    <i class="fas fa-exchange-alt"></i> Convert
+                </button>
+                
+                <div class="result-container">
+                    <div id="conversion-result" class="result-placeholder">
+                        Conversion results will appear here
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Market Overview</h2>
+                </div>
+                
+                <div class="crypto-grid">
+                    <div class="crypto-card">
+                        <h3><i class="fab fa-bitcoin"></i> Bitcoin</h3>
+                        <div class="price">$61,423.78</div>
+                        <div style="color: #00b894;">+2.3% (24h)</div>
+                    </div>
+                    
+                    <div class="crypto-card">
+                        <h3><i class="fab fa-ethereum"></i> Ethereum</h3>
+                        <div class="price">$3,412.56</div>
+                        <div style="color: #00b894;">+1.8% (24h)</div>
+                    </div>
+                    
+                    <div class="crypto-card">
+                        <h3><i class="fas fa-coins"></i> Binance Coin</h3>
+                        <div class="price">$586.34</div>
+                        <div style="color: #ff7675;">-0.4% (24h)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-wallet"></i>
+                    <h2>Profit Calculator</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="investment">Investment Amount ($)</label>
+                    <input type="number" id="investment" placeholder="Enter investment amount">
+                </div>
+                
+                <div class="input-group">
+                    <label for="buy-price">Buy Price ($)</label>
+                    <input type="number" id="buy-price" placeholder="Enter buy price per coin">
+                </div>
+                
+                <div class="input-group">
+                    <label for="sell-price">Sell Price ($)</label>
+                    <input type="number" id="sell-price" placeholder="Enter sell price per coin">
+                </div>
+                
+                <button class="btn">
+                    <i class="fas fa-calculator"></i> Calculate Profit
+                </button>
+                
+                <div class="result-container">
+                    <div class="result-placeholder">
+                        Profit/loss results will appear here
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="ai" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-graduation-cap"></i>
+                    <h2>AI Homework Helper</h2>
+                </div>
+                
+                <div class="input-group">
+                    <label for="subject">Subject</label>
+                    <select id="subject">
+                        <option value="">Select a subject</option>
+                        <option value="math">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="biology">Biology</option>
+                        <option value="english">English</option>
+                        <option value="hindi">Hindi</option>
+                        <option value="history">History</option>
+                        <option value="geography">Geography</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="question">Your Question</label>
+                    <textarea id="question" rows="4" placeholder="Type your question here..."></textarea>
+                </div>
+                
+                <div class="image-upload" id="image-upload">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3>Upload Image (Optional)</h3>
+                    <p>Click to upload an image of your problem</p>
+                    <input type="file" id="image-input" accept="image/*" style="display: none;">
+                </div>
+                
+                <button class="btn" id="ask-btn">
+                    <i class="fas fa-paper-plane"></i> Ask AI
+                </button>
+                
+                <div class="loader" id="loader">
+                    <div class="spinner"></div>
+                    <p>AI is thinking...</p>
+                </div>
+                
+                <div class="result-container">
+                    <div id="ai-result" class="result-placeholder">
+                        AI response will appear here
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ad-container">
+            <div style="position: relative; width: 100%;">
+                <span class="ad-label">ADVERTISEMENT</span>
+                <div style="background: linear-gradient(45deg, #1a1a2e, #16213e); height: 150px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                    <p>Ad Space (320x50)</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Crypto Calculator - AI Helper &copy; 2023 | All Rights Reserved</p>
+            <p>Disclaimer: This is a demo application. Crypto prices are for illustration only.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons and content
+                document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button
+                button.classList.add('active');
+                
+                // Show corresponding content
+                const tabId = button.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Image upload functionality
+        document.getElementById('image-upload').addEventListener('click', () => {
+            document.getElementById('image-input').click();
+        });
+        
+        document.getElementById('image-input').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const fileName = this.files[0].name;
+                document.querySelector('#image-upload p').textContent = `Selected: ${fileName}`;
+            }
+        });
+        
+        // Convert button functionality
+        document.getElementById('convert-btn').addEventListener('click', function() {
+            const amount = parseFloat(document.getElementById('amount').value) || 1;
+            const from = document.getElementById('from-crypto').value;
+            const to = document.getElementById('to-crypto').value;
+            
+            // Simulate conversion
+            const conversionRates = {
+                'BTC-USD': 61423.78,
+                'ETH-USD': 3412.56,
+                'BNB-USD': 586.34,
+                'ADA-USD': 0.45,
+                'SOL-USD': 142.67,
+                'XRP-USD': 0.52,
+                'DOGE-USD': 0.12
+            };
+            
+            let result;
